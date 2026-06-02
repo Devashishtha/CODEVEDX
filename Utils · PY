@@ -1,0 +1,63 @@
+"""
+utils.py - Helper functions for input validation and display.
+CodeVedX AI/ML Internship - Project 1
+"""
+
+import os
+import re
+
+
+def clear_screen():
+    """Clear the terminal screen (works on Windows and Linux/Mac)."""
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+def print_header():
+    """Print the application header banner."""
+    print("  " + "═" * 50)
+    print("  ⚡  UTILITY USAGE PREDICTION TOOL")
+    print("  CodeVedX AI/ML Internship — Project 1")
+    print("  " + "═" * 50)
+
+
+def get_float_input(prompt, min_val=None, max_val=None):
+    """
+    Prompt user for a float input with validation.
+
+    Args:
+        prompt: string to display
+        min_val: minimum acceptable value (optional)
+        max_val: maximum acceptable value (optional)
+
+    Returns:
+        validated float value
+    """
+    while True:
+        try:
+            value = float(input(prompt))
+            if min_val is not None and value < min_val:
+                print(f"  ❌ Value must be at least {min_val}. Try again.")
+                continue
+            if max_val is not None and value > max_val:
+                print(f"  ❌ Value must be at most {max_val}. Try again.")
+                continue
+            return value
+        except ValueError:
+            print("  ❌ Invalid input. Please enter a number.")
+
+
+def get_month_input(prompt):
+    """
+    Prompt user for a month in YYYY-MM format with validation.
+
+    Args:
+        prompt: string to display
+
+    Returns:
+        validated month string in YYYY-MM format
+    """
+    while True:
+        value = input(prompt).strip()
+        if re.match(r"^\d{4}-(0[1-9]|1[0-2])$", value):
+            return value
+        print("  ❌ Invalid format. Use YYYY-MM (e.g. 2024-05).")
