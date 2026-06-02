@@ -1,0 +1,138 @@
+# ⚡ Utility Usage Prediction Tool
+### CodeVedX AI/ML Internship — Project 1
+
+A Python console application that tracks monthly utility usage (electricity, water, gas) and uses **Linear Regression** to predict future consumption.
+
+---
+
+## 🚀 Features
+
+- ✅ Menu-driven console interface (9 options)
+- ✅ Add, view, update, delete monthly records
+- ✅ CSV file storage using Pandas
+- ✅ ML model training with scikit-learn (Linear Regression)
+- ✅ Predict next month's utility usage
+- ✅ Export data to CSV
+- ✅ Input validation & exception handling
+- ✅ Model persistence (save/load with pickle)
+
+---
+
+## 📁 Project Structure
+
+```
+Project1_UtilityPrediction/
+├── main.py            # Entry point — menu-driven app
+├── data_manager.py    # CSV read/write operations
+├── model_trainer.py   # ML model (Linear Regression)
+├── utils.py           # Helper functions & input validation
+├── requirements.txt   # Python dependencies
+├── data/
+│   └── usage_data.csv # Auto-created on first run
+└── models/
+    └── utility_model.pkl # Saved after training
+```
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/CODEVEDX.git
+cd CODEVEDX/Project1_UtilityPrediction
+```
+
+### 2. Create a virtual environment (recommended)
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the application
+```bash
+python main.py
+```
+
+---
+
+## 🎯 How to Use
+
+1. **Start** → Run `python main.py`
+2. **Add data** → Option 1 — Enter monthly electricity, water, gas, bill values
+3. **Load sample data** → Option 8 — Loads 6 months of demo data instantly
+4. **Train model** → Option 5 — Trains Linear Regression on your data (need 3+ months)
+5. **Predict** → Option 6 — Predicts next month's usage
+6. **View records** → Option 2 — See all data with averages
+7. **Export** → Option 7 — Save data to a CSV file
+
+---
+
+## 🤖 ML Model Details
+
+| Property | Value |
+|---|---|
+| Algorithm | Linear Regression (scikit-learn) |
+| Feature | Month index (1, 2, 3, ... N) |
+| Targets | Electricity, Water, Gas, Bill |
+| Evaluation | R² Score |
+| Storage | Pickle (.pkl) |
+
+---
+
+## 🛠 Tech Stack
+
+| Tool | Purpose |
+|---|---|
+| Python 3.x | Core language |
+| Pandas | CSV handling & DataFrames |
+| NumPy | Numerical operations |
+| scikit-learn | Linear Regression model |
+| pickle | Model serialization |
+
+---
+
+## 📊 Sample Output
+
+```
+  ══════════════════════════════════════════════════
+  ⚡  UTILITY USAGE PREDICTION TOOL
+  CodeVedX AI/ML Internship — Project 1
+  ══════════════════════════════════════════════════
+
+  📋 MAIN MENU
+  ───────────────────────────────────
+  1. Add usage data
+  2. View all records
+  3. Update existing record
+  ...
+
+  🔮 Predicted usage for Month 7:
+  ⚡ Electricity:  278.3 units
+  💧 Water:        9150.0 liters
+  🔥 Gas:          14.8 units
+  💰 Total Bill:   ₹2180.50
+```
+
+---
+
+## 👨‍💻 Author
+
+**[Dev Vashishtha]**
+CodeVedX AI/ML Internship Batch 2025
+GitHub: [github.com/Devashishtha]
+LinkedIn: [linkedin.com/in/dev-vashishtha1]
+
+---
+
+*Built with ❤️ as part of CodeVedX AI/ML Internship Program*
