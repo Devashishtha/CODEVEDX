@@ -1,0 +1,76 @@
+"""
+data_manager.py - Handles all data storage and retrieval using CSV files.
+CodeVedX AI/ML Internship - Project 1
+"""
+
+import os
+import pandas as pd
+
+
+class DataManager:
+    """Manages utility usage data stored in a CSV file."""
+
+    def __init__(self, filepath="data/usage_data.csv"):
+        self.filepath = filepath
+        self.columns = ["month", "electricity", "water", "gas", "bill"]
+        self._ensure_file_exists()
+
+    def _ensure_file_exists(self):
+        """Create the data directory and CSV file if they don't exist."""
+        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        if not os.path.exists(self.filepath):
+            # Create empty CSV with headers
+            pd.DataFrame(columns=self.columns).to_csv(self.filepath, index=False)
+
+    def get_all_records(self):
+        """Read and return all records from the CSV file."""
+        try:
+            df = pd.read_csv(self.filepath)
+            # Ensure correct column types
+            for col in ["electricity", "water", "gas", "bill"]:
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+            df = df.dropna()
+            df = df.sort_values("month").reset_index(drop=True)
+            return df
+        except Exception as e:
+            print(f"  ⚠  Warning: Could not read data file. {e}")
+            return pd.DataFrame(columns=self.columns)
+
+    def add_record(self, month, electricity, water, gas, bill):
+        """Add or overwrite a monthly record in the CSV."""
+        df = self.get_all_records()
+
+        # Remove existing record for this month if present
+        df = df[df["month"] != month]
+
+        # Add new record
+        new_row = pd.DataFrame([{
+            "month": month,
+            "electricity": float(electricity),
+            "water": float(water),
+            "gas": float(gas),
+            "bill": float(bill)
+        }])
+
+        df = pd.concat([df, new_row], ignore_index=True)
+        df = df.sort_values("month").reset_index(drop=True)
+        df.to_csv(self.filepath, index=False)
+
+    def delete_record(self, month):
+        """Delete a record by month."""
+        df = self.get_all_records()
+        df = df[df["month"] != month]
+        df.to_csv(self.filepath, index=False)
+
+    def record_exists(self, month):
+        """Check if a record for the given month already exists."""
+        df = self.get_all_records()
+        return month in df["month"].values
+
+    def get_record(self, month):
+        """Retrieve a single record by month as a dict."""
+        df = self.get_all_records()
+        row = df[df["month"] == month]
+        if row.empty:
+            return None
+        return row.iloc[0].to_dict()
