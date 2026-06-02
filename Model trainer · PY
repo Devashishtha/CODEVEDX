@@ -1,0 +1,99 @@
+"""
+model_trainer.py - ML model training and prediction using Linear Regression.
+CodeVedX AI/ML Internship - Project 1
+"""
+
+import os
+import pickle
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import r2_score
+
+
+class ModelTrainer:
+    """
+    Trains a Linear Regression model on utility usage data.
+
+    Features used: month index (1, 2, 3, ... N) — simple time series
+    Targets: electricity, water, gas, bill (one model per target)
+    """
+
+    def __init__(self, model_dir="models"):
+        self.model_dir = model_dir
+        self.model_path = os.path.join(model_dir, "utility_model.pkl")
+        self.models = {}      # dict of {target: LinearRegression}
+        self.scaler = MinMaxScaler()
+        self._load_model()
+
+    def _load_model(self):
+        """Load a previously trained model from disk if it exists."""
+        if os.path.exists(self.model_path):
+            try:
+                with open(self.model_path, "rb") as f:
+                    saved = pickle.load(f)
+                    self.models = saved.get("models", {})
+                    self.scaler = saved.get("scaler", MinMaxScaler())
+            except Exception:
+                self.models = {}
+
+    def _save_model(self):
+        """Save the trained model to disk."""
+        os.makedirs(self.model_dir, exist_ok=True)
+        with open(self.model_path, "wb") as f:
+            pickle.dump({"models": self.models, "scaler": self.scaler}, f)
+
+    def train(self, df):
+        """
+        Train one Linear Regression model per utility type.
+
+        Args:
+            df: pandas DataFrame with columns [month, electricity, water, gas, bill]
+
+        Returns:
+            dict with R² scores for each utility type
+        """
+        # Feature: month index (1, 2, 3, ...)
+        X = np.array(range(1, len(df) + 1)).reshape(-1, 1)
+        X_scaled = self.scaler.fit_transform(X)
+
+        targets = ["electricity", "water", "gas", "bill"]
+        results = {}
+        self.models = {}
+
+        for target in targets:
+            y = df[target].values
+            model = LinearRegression()
+            model.fit(X_scaled, y)
+            y_pred = model.predict(X_scaled)
+            r2 = r2_score(y, y_pred)
+            self.models[target] = model
+            results[f"r2_{target}"] = max(0.0, r2)
+
+        self._save_model()
+        return results
+
+    def predict(self, df):
+        """
+        Predict usage for the next month after the last recorded month.
+
+        Args:
+            df: pandas DataFrame with existing records
+
+        Returns:
+            dict with predicted values for each utility type
+        """
+        next_index = len(df) + 1
+        X_next = np.array([[next_index]])
+        X_scaled = self.scaler.transform(X_next)
+
+        prediction = {}
+        for target, model in self.models.items():
+            pred_val = model.predict(X_scaled)[0]
+            prediction[target] = round(float(pred_val), 2)
+
+        return prediction
+
+    def is_trained(self):
+        """Return True if a trained model is loaded."""
+        return len(self.models) > 0
